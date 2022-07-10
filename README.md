@@ -23,3 +23,5 @@
 для запуска cклонируйте данный репозиторий к себе `git clone https://github.com/r33n99/welbex-test-q.git`
 
 для запуска пропишите `npm i` -> `npm run server` -> `npm run start`
+
+ # <a href="https://welbex-test-q.surge.sh/" alt="demo" >LIVE DEMO</a>
