@@ -11,3 +11,53 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+
+.App {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+}
+
+.container {
+  text-align: center;
+  padding: 30px 30px;
+  display: flex;
+  flex-direction: column;
+  align-content: center;
+}
+
+ul.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  list-style: none;
+}
+
+
+.form-container {
+  display: flex;
+  justify-content: space-around;
+  align-content: center;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.form-container .form-select {
+  max-width: 200px;
+
+}
+
+.filters-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.error {
+  position: relative;
+  color: red;
+  text-align: center;
+}

@@ -1,58 +1,81 @@
-import React from 'react';
-import logo from './logo.svg';
-import { Counter } from './features/counter/Counter';
-import './App.css';
+import React, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchTable, SelectTable } from './features/tableSlice';
+import TableComponent from './components/TableComponent';
+import Filters from './components/Filters';
+import Paginator from './components/Paginator';
+import { CircularProgress, Container } from '@mui/material';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <Counter />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <span>
-          <span>Learn </span>
-          <a
-            className="App-link"
-            href="https://reactjs.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            React
-          </a>
-          <span>, </span>
-          <a
-            className="App-link"
-            href="https://redux.js.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Redux
-          </a>
-          <span>, </span>
-          <a
-            className="App-link"
-            href="https://redux-toolkit.js.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Redux Toolkit
-          </a>
-          ,<span> and </span>
-          <a
-            className="App-link"
-            href="https://react-redux.js.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            React Redux
-          </a>
-        </span>
-      </header>
-    </div>
-  );
-}
+const App = () => {
+    const dispatch = useDispatch();
+    const { value, column, condition, isLoading, table } = useSelector(SelectTable);
+    const [data, setData] = useState([]);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [itemsPerPage] = useState(5);
+
+    useEffect(() => {
+        dispatch(fetchTable());
+        setData(table);
+    }, []);
+
+    useEffect(() => {
+        if (value && column && condition) {
+            filterData(condition, value, column);
+        } else {
+            setData(table);
+        }
+    }, [value, column, condition]);
+
+    useEffect(() => {
+        if (table.length > 1) {
+            setData(table);
+        }
+    }, [table]);
+
+    const filterData = (condition, value, column) => {
+        const copyArray = [...data];
+        if (condition === 'equals') {
+            const filtered = copyArray.filter((item) => item[column] === value.trim());
+            setData(filtered);
+        }
+        if (condition === 'more') {
+            const filtered = copyArray.filter((item) => item[column] > value.trim());
+            setData(filtered);
+        }
+        if (condition === 'less') {
+            const filtered = copyArray.filter((item) => item[column] < value.trim());
+            setData(filtered);
+        }
+        if (condition === 'contain') {
+            const filtered = copyArray.filter((item) => item[column].toString().includes(value.trim()));
+            setData(filtered);
+        }
+    };
+
+    const lastItemIdex = currentPage * itemsPerPage;
+    const firstitemIndex = lastItemIdex - itemsPerPage;
+    const currentItems = data.slice(firstitemIndex, lastItemIdex);
+    const paginate = (pageNumber) => setCurrentPage(pageNumber);
+
+    return (
+        <Container>
+            {!isLoading ? (
+                <>
+                    <Filters />
+                    {data.length ? <TableComponent data={currentItems} /> : 'ничего не найдено по данному фильтру'}
+                    <Paginator
+                        setCurrentPage={setCurrentPage}
+                        page={currentPage}
+                        paginate={paginate}
+                        itemsPerPage={itemsPerPage}
+                        totalItems={data.length}
+                    />
+                </>
+            ) : (
+                <CircularProgress />
+            )}
+        </Container>
+    );
+};
 
 export default App;
